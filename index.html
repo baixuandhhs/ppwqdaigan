@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer"> <!-- 解决B站背景图防盗链403问题 -->
     <title>平平无祈 - 代肝价格表</title>
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -77,6 +78,18 @@
         }
         body.light-theme #tab-starRail, body.light-theme #tab-endfield, body.light-theme #tab-mugen, body.light-theme #tab-zzz {
             text-shadow: none;
+        }
+
+        /* 优惠公告栏磨砂玻璃适配 */
+        #promoBanner {
+            background-color: rgba(15, 23, 42, 0.65) !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        body.light-theme #promoBanner {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+            border-color: rgba(99, 102, 241, 0.25) !important;
         }
 
         /* 玻璃拟态卡片核心样式 - 调高背景不透明度至 88% */
@@ -380,6 +393,24 @@
             <button onclick="switchGame('zzz')" id="tab-zzz" class="py-3 px-6 text-slate-400 font-semibold text-base whitespace-nowrap transition-all duration-300 hover:text-slate-200">
                 <i class="fa-solid fa-bolt mr-2"></i>绝区零
             </button>
+        </div>
+
+        <!-- 专属优惠公告栏 (置于每个板块最上方) -->
+        <div id="promoBanner" class="mb-8 p-4 rounded-2xl border flex gap-3.5 items-start text-xs sm:text-sm text-slate-300 shadow-xl transition-all duration-300">
+            <div class="shrink-0 w-8 h-8 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center">
+                <i class="fa-solid fa-bullhorn text-sm"></i>
+            </div>
+            <div class="flex-grow space-y-1.5">
+                <h4 class="font-bold text-sm sm:text-base text-rose-400 flex items-center gap-1.5">
+                </h4>
+                <p class="leading-relaxed">
+                    ✨ <strong class="text-slate-100">首次下单打八折</strong>，长期（托管或下单满三次） <strong class="text-rose-400">九折</strong> 优惠！
+                </p>
+                <div class="w-full border-t border-slate-700/30 my-2"></div>
+                <p class="leading-relaxed text-[11px] text-slate-400">
+                    🕒 <strong class="text-slate-200">售后保障</strong>：月托管到期会在前一天提醒。为防止特殊情况老板无法及时看手机或回复消息导致断档，<strong class="text-indigo-400">托管将免费额外进行一个星期</strong> 才会结束。
+                </p>
+            </div>
         </div>
 
         <!-- 价格展示区 -->
@@ -1565,4 +1596,4 @@
         };
     </script>
 </body>
-</html>s
+</html>
