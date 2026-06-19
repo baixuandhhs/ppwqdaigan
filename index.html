@@ -36,170 +36,301 @@
         
         /* 平滑色彩过渡 */
         body {
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease, background-image 0.5s ease-in-out;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+            z-index: 1;
         }
 
-        /* 搜索定位卡片高亮闪烁动画 */
-        @keyframes card-flash {
-            0%, 100% { border-color: #f43f5e; box-shadow: 0 0 15px rgba(244, 63, 94, 0.5); }
-            50% { border-color: rgba(244, 63, 94, 0.2); box-shadow: none; }
+        /* 网页全局背景半透明遮罩（调暗背景图，防止喧宾夺主） */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-color: rgba(8, 10, 24, 0.78); /* 深色模式下调暗至 75% 压制过亮背景 */
+            z-index: -1;
+            transition: background-color 0.3s ease;
         }
-        .card-flash-effect {
-            animation: card-flash 0.8s ease-in-out 3; /* 闪烁3次 */
+        body.light-theme::before {
+            background-color: rgba(255, 255, 255, 0.85); /* 浅色模式下调亮至 85% */
         }
 
-        /* ================= 浅色主题模式 (Light Mode) 样式覆写 ================= */
-        body.light-theme {
-            background-color: #f8fafc; /* slate-50 */
-            color: #0f172a; /* slate-900 */
+        /* ==================== 磨砂玻璃视觉微调样式 ==================== */
+        
+        /* 顶部导航栏玻璃化 */
+        header {
+            background-color: rgba(15, 23, 42, 0.75) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
         }
         body.light-theme header {
-            background-color: rgba(255, 255, 255, 0.85);
-            border-color: #e2e8f0;
+            background-color: rgba(255, 255, 255, 0.80) !important;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
         }
-        body.light-theme header h1 {
-            color: #0f172a;
+
+        /* 标签栏文字阴影，防止被亮色背景吞掉 */
+        #tab-starRail, #tab-endfield, #tab-mugen, #tab-zzz {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
-        body.light-theme header p {
-            color: #475569;
+        body.light-theme #tab-starRail, body.light-theme #tab-endfield, body.light-theme #tab-mugen, body.light-theme #tab-zzz {
+            text-shadow: none;
         }
-        body.light-theme #searchInput, body.light-theme #themeToggleBtn {
-            background-color: #f1f5f9;
-            border-color: #cbd5e1;
-            color: #334155;
+
+        /* 玻璃拟态卡片核心样式 - 调高背景不透明度至 88% */
+        .game-card {
+            background-color: rgba(17, 24, 39, 0.88) !important; /* 使用更实沉的深灰色，阻挡高亮背景 */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        body.light-theme #searchInput {
-            color: #0f172a;
+        /* 强制重置卡片内文本颜色，提供极高对比度 */
+        .game-card h3 {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            font-size: 1.05rem !important;
         }
-        body.light-theme #searchInput::placeholder {
-            color: #94a3b8;
+        .game-card p {
+            color: #cbd5e1 !important; /* 亮灰色描述文本 */
+            font-size: 0.75rem !important;
+            line-height: 1.5 !important;
         }
-        body.light-theme #searchSuggestions {
-            background-color: #ffffff;
-            border-color: #cbd5e1;
+        .game-card .card-action-text {
+            color: #94a3b8 !important;
+            font-weight: 600 !important;
         }
-        body.light-theme .suggestion-item {
-            border-bottom-color: #f1f5f9;
-            color: #475569;
+
+        .game-card:hover {
+            background-color: rgba(17, 24, 39, 0.95) !important;
+            border-color: rgba(244, 63, 94, 0.5) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px -5px rgba(244, 63, 94, 0.25);
         }
-        body.light-theme .suggestion-item:hover {
-            background-color: #f1f5f9;
+        .game-card.selected {
+            background-color: rgba(17, 24, 39, 0.95) !important;
+            border-color: #f43f5e !important;
+            box-shadow: 0 0 22px rgba(244, 63, 94, 0.4) !important;
         }
-        body.light-theme .suggestion-item .font-bold {
-            color: #0f172a;
+        .game-card.selected h3 {
+            color: #f43f5e !important;
         }
-        body.light-theme .category-title-wrap {
-            border-left-color: #e11d48;
+        .game-card.selected .card-action-text {
+            color: #f43f5e !important;
         }
-        body.light-theme .category-title-text {
-            color: #0f172a;
-        }
+
+        /* 浅色主题模式下的卡片颜色 - 同样进行压实 */
         body.light-theme .game-card {
-            background-color: #ffffff;
-            border-color: #e2e8f0;
-        }
-        body.light-theme .game-card:hover {
-            border-color: #cbd5e1;
-            background-color: #f8fafc;
-        }
-        body.light-theme .game-card.selected {
-            background-color: #ffffff;
-            border-color: #e11d48;
-            box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.1), 0 4px 6px -4px rgba(225, 29, 72, 0.1);
+            background-color: rgba(255, 255, 255, 0.92) !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
         }
         body.light-theme .game-card h3 {
-            color: #0f172a;
-        }
-        body.light-theme .game-card h3.text-rose-400 {
-            color: #e11d48;
+            color: #0f172a !important; /* 深 slate 色标题 */
         }
         body.light-theme .game-card p {
-            color: #475569;
+            color: #334155 !important; /* 暗灰色描述文本 */
         }
-        body.light-theme .card-action-text {
-            color: #64748b;
+        body.light-theme .game-card .card-action-text {
+            color: #64748b !important;
         }
-        body.light-theme .card-action-text.text-rose-400 {
-            color: #e11d48;
+        body.light-theme .game-card:hover {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+            border-color: rgba(225, 29, 72, 0.4) !important;
+            box-shadow: 0 12px 30px -5px rgba(225, 29, 72, 0.15);
         }
-        body.light-theme #noticeBanner {
-            background-color: rgba(244, 63, 94, 0.05);
-            border-color: rgba(244, 63, 94, 0.2);
-            color: #9f1239;
+        body.light-theme .game-card.selected {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+            border-color: #e11d48 !important;
+            box-shadow: 0 0 25px rgba(225, 29, 72, 0.2) !important;
         }
-        body.light-theme #tab-genshin, body.light-theme #tab-starRail, body.light-theme #tab-endfield {
-            color: #64748b;
+        body.light-theme .game-card.selected h3 {
+            color: #e11d48 !important;
         }
-        body.light-theme #tab-genshin.tab-active, body.light-theme #tab-starRail.tab-active, body.light-theme #tab-endfield.tab-active {
-            color: #e11d48;
-            border-bottom-color: #e11d48;
+        body.light-theme .game-card.selected .card-action-text {
+            color: #e11d48 !important;
         }
-        body.light-theme footer {
-            background-color: #f1f5f9;
-            border-color: #e2e8f0;
+
+        /* 统一大类标题、副标题与标签高可读性优化 */
+        header h1 {
+            color: #ffffff !important;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            font-weight: 800 !important;
         }
-        body.light-theme footer h3 {
-            color: #334155;
+        header p {
+            color: #cbd5e1 !important;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
         }
-        body.light-theme footer p {
-            color: #64748b;
+        body.light-theme header h1 {
+            color: #0f172a !important;
+            text-shadow: none;
         }
-        body.light-theme footer .cursor-pointer {
-            background-color: #ffffff;
-            border-color: #e2e8f0;
+        body.light-theme header p {
+            color: #475569 !important;
+            text-shadow: none;
         }
-        body.light-theme footer .cursor-pointer:hover {
-            background-color: #f8fafc;
+
+        /* 游戏大类 Tab 按钮 */
+        #tab-starRail, #tab-endfield, #tab-mugen, #tab-zzz {
+            color: #e2e8f0 !important; 
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            font-weight: 700 !important;
+            transition: all 0.3s ease;
         }
-        body.light-theme footer .cursor-pointer p {
-            color: #475569;
+        #tab-starRail:hover, #tab-endfield:hover, #tab-mugen:hover, #tab-zzz:hover {
+            color: #ffffff !important;
         }
-        body.light-theme footer .cursor-pointer .text-sm {
-            color: #0f172a;
+        #tab-starRail.tab-active, #tab-endfield.tab-active, #tab-mugen.tab-active, #tab-zzz.tab-active {
+            color: #fda4af !important; 
+            border-bottom-color: #fda4af !important;
+            text-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
         }
-        
-        /* 浅色下的右侧购物车与左侧目录抽屉 */
+        body.light-theme #tab-starRail, body.light-theme #tab-endfield, body.light-theme #tab-mugen, body.light-theme #tab-zzz {
+            color: #475569 !important;
+            text-shadow: none;
+        }
+        body.light-theme #tab-starRail.tab-active, body.light-theme #tab-endfield.tab-active, body.light-theme #tab-mugen.tab-active, body.light-theme #tab-zzz.tab-active {
+            color: #e11d48 !important;
+            border-bottom-color: #e11d48 !important;
+        }
+
+        /* 搜索输入框 */
+        #searchInput {
+            background-color: rgba(15, 23, 42, 0.65) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            color: #ffffff !important;
+        }
+        #searchInput::placeholder {
+            color: #94a3b8 !important;
+        }
+        body.light-theme #searchInput {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+            border: 1px solid rgba(15, 23, 42, 0.12) !important;
+            color: #0f172a !important;
+        }
+        body.light-theme #searchInput::placeholder {
+            color: #64748b !important;
+        }
+
+        /* 大分类标题 */
+        .category-title-text {
+            color: #ffffff !important;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        }
+        body.light-theme .category-title-text {
+            color: #0f172a !important;
+            text-shadow: none;
+        }
+
+        /* ==================== 引导线与箭头样式 ==================== */
+        .border-dashed {
+            border-color: rgba(255, 255, 255, 0.25) !important;
+        }
+        body.light-theme .border-dashed {
+            border-color: rgba(15, 23, 42, 0.15) !important;
+        }
+        .fa-arrow-right, .fa-arrow-left, .fa-arrow-down {
+            color: #f43f5e !important; 
+            text-shadow: 0 0 8px rgba(244, 63, 94, 0.6);
+        }
+
+        /* 侧边抽屉 */
+        #cartDrawer, #tocDrawer {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+        }
         body.light-theme #cartDrawer, body.light-theme #tocDrawer {
-            background-color: #ffffff;
-            border-color: #cbd5e1;
+            background-color: rgba(255, 255, 255, 0.82) !important;
+            border-left: 1px solid rgba(15, 23, 42, 0.06) !important;
+        }
+        #cartDrawer .bg-slate-950, #tocDrawer .bg-slate-950 {
+            background-color: rgba(15, 23, 42, 0.3) !important;
         }
         body.light-theme #cartDrawer .bg-slate-950, body.light-theme #tocDrawer .bg-slate-950 {
-            background-color: #f1f5f9;
+            background-color: rgba(255, 255, 255, 0.2) !important;
         }
-        body.light-theme #cartDrawer h3 {
-            color: #e11d48;
+
+        /* 页脚 */
+        footer {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
         }
-        body.light-theme #tocDrawer h3 {
-            color: #4f46e5;
+        body.light-theme footer {
+            background-color: rgba(241, 245, 249, 0.8) !important;
+            border-top: 1px solid rgba(15, 23, 42, 0.05) !important;
         }
-        body.light-theme #cartDrawer .text-slate-200, body.light-theme #tocDrawer .text-slate-200 {
-            color: #0f172a;
+
+        /* 深色模式下的联系面板 */
+        footer .cursor-pointer {
+            background-color: rgba(17, 24, 39, 0.90) !important; /* 使用和卡片一致的深黑曜石背景 */
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
         }
-        body.light-theme #cartItemsList .bg-slate-800\/80, body.light-theme .toc-pill {
-            background-color: #f8fafc;
-            border-color: #e2e8f0;
-            color: #334155;
+        footer .cursor-pointer:hover {
+            background-color: rgba(17, 24, 39, 0.98) !important;
+            border-color: rgba(244, 63, 94, 0.5) !important;
+            transform: translateY(-2px);
         }
-        body.light-theme #cartItemsList .bg-slate-800\/80:hover, body.light-theme .toc-pill:hover {
-            background-color: #f1f5f9;
-            color: #0f172a;
+        footer h3 {
+            color: #ffffff !important;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
         }
-        body.light-theme #cartItemsList h4 {
-            color: #0f172a;
+        footer p.text-slate-400 {
+            color: #cbd5e1 !important; /* 彻底提亮说明字 */
         }
-        body.light-theme #cartItemsList .text-rose-400 {
-            color: #e11d48;
+        footer p.text-slate-200 {
+            color: #ffffff !important; /* 号码直观高亮显示 */
+            font-size: 0.95rem !important;
         }
-        body.light-theme #cartItemsList .bg-slate-700 {
-            background-color: #e2e8f0;
-            color: #475569;
+        footer .fa-copy {
+            color: #94a3b8 !important;
+        }
+
+        /* 浅色模式下的联系面板 */
+        body.light-theme footer h3 {
+            color: #0f172a !important;
+            text-shadow: none;
+        }
+        body.light-theme footer .cursor-pointer {
+            background-color: rgba(255, 255, 255, 0.95) !important; /* 亮白色白瓷面板 */
+            border: 1px solid rgba(15, 23, 42, 0.12) !important;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+        }
+        body.light-theme footer .cursor-pointer:hover {
+            background-color: #ffffff !important;
+            border-color: rgba(225, 29, 72, 0.4) !important;
+        }
+        body.light-theme footer p.text-slate-400 {
+            color: #475569 !important; /* 采用更深的 slate 色 */
+        }
+        body.light-theme footer p.text-slate-200 {
+            color: #0f172a !important; /* 纯黑核心字 */
+        }
+        body.light-theme footer .fa-copy {
+            color: #64748b !important;
+        }
+
+        /* 蛇形连接符背景 */
+        .theme-bg-adapt {
+            background-color: rgba(15, 23, 42, 0.85) !important;
+        }
+        body.light-theme .theme-bg-adapt {
+            background-color: rgba(255, 255, 255, 0.85) !important;
         }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans overflow-x-hidden">
 
     <!-- 导航栏 -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
+    <header class="sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-500 to-indigo-500 flex items-center justify-center font-bold text-lg text-white">
@@ -216,10 +347,10 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input id="searchInput" type="text" placeholder="搜索代肝项目 (如: 那德卡莱、日常、深渊)..." oninput="handleSearchInput()"
+                    <input id="searchInput" type="text" placeholder="搜索代肝项目 (如: 日常、深渊、主线)..." oninput="handleSearchInput()"
                            class="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-200 focus:outline-none focus:border-rose-500 transition-colors">
                     
-                    <!-- 搜索建议下拉弹窗 (新增) -->
+                    <!-- 搜索建议下拉弹窗 -->
                     <div id="searchSuggestions" class="absolute left-0 right-0 top-full mt-2 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl max-h-64 overflow-y-auto z-50 hidden transition-all duration-300">
                         <!-- 动态渲染建议项 -->
                     </div>
@@ -236,21 +367,19 @@
     <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
         
         <!-- 游戏选择 Tabs -->
-        <div class="flex border-b border-slate-800 mb-6 overflow-x-auto justify-start sm:justify-center gap-2 sm:gap-8 pb-px">
-            <button onclick="switchGame('genshin')" id="tab-genshin" class="py-3 px-6 text-slate-400 font-semibold text-base whitespace-nowrap transition-all duration-300 hover:text-slate-200">
-                <i class="fa-solid fa-star-of-life mr-2"></i>原神
-            </button>
+        <div class="flex border-b border-slate-800 mb-6 overflow-x-auto justify-start sm:justify-center gap-2 sm:gap-8 pb-px scrollbar-none">
             <button onclick="switchGame('starRail')" id="tab-starRail" class="py-3 px-6 text-slate-400 font-semibold text-base whitespace-nowrap transition-all duration-300 hover:text-slate-200">
                 <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>崩坏：星穹铁道
             </button>
             <button onclick="switchGame('endfield')" id="tab-endfield" class="py-3 px-6 text-slate-400 font-semibold text-base whitespace-nowrap transition-all duration-300 hover:text-slate-200">
                 <i class="fa-solid fa-shield-halved mr-2"></i>明日方舟：终末地
             </button>
-        </div>
-
-        <!-- 游戏顶部公告提示 (动态加载) -->
-        <div id="noticeBanner" class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-8 text-sm text-rose-200/90 leading-relaxed hidden">
-            <!-- 动态注入提示内容 -->
+            <button onclick="switchGame('mugen')" id="tab-mugen" class="py-3 px-6 text-slate-400 font-semibold text-base whitespace-nowrap transition-all duration-300 hover:text-slate-200">
+                <i class="fa-solid fa-circle-nodes mr-2"></i>异环
+            </button>
+            <button onclick="switchGame('zzz')" id="tab-zzz" class="py-3 px-6 text-slate-400 font-semibold text-base whitespace-nowrap transition-all duration-300 hover:text-slate-200">
+                <i class="fa-solid fa-bolt mr-2"></i>绝区零
+            </button>
         </div>
 
         <!-- 价格展示区 -->
@@ -261,50 +390,45 @@
     </main>
 
     <!-- 页脚与联系方式 -->
-    <footer class="bg-slate-900 border-t border-slate-800 mt-12 py-8 transition-colors duration-300">
+    <footer class="mt-12 py-8 transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4">
             <h3 class="text-center text-lg font-bold text-slate-300 mb-6">—— 联系我 & 快速下单 ——</h3>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                 <!-- 微信 -->
-                <div onclick="copyText('ppwq1115', '微信')" class="cursor-pointer bg-slate-800 hover:bg-slate-700/80 transition-all rounded-xl p-4 flex items-center justify-between border border-slate-700">
+                <div onclick="copyText('ppwq1115', '微信')" class="cursor-pointer transition-all rounded-xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <i class="fa-brands fa-weixin text-green-400 text-2xl w-8 text-center"></i>
                         <div>
-                            <p class="text-xs text-slate-400">微信号 (点击复制)</p>
+                            <p class="text-xs text-slate-400 font-semibold">微信号 (点击复制)</p>
                             <p class="text-sm font-semibold text-slate-200">ppwq1115</p>
                         </div>
                     </div>
                     <i class="fa-regular fa-copy text-slate-500 text-sm"></i>
                 </div>
                 <!-- QQ -->
-                <div onclick="copyText('2080752235', 'QQ')" class="cursor-pointer bg-slate-800 hover:bg-slate-700/80 transition-all rounded-xl p-4 flex items-center justify-between border border-slate-700">
+                <div onclick="copyText('2080752235', 'QQ')" class="cursor-pointer transition-all rounded-xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <i class="fa-brands fa-qq text-blue-400 text-2xl w-8 text-center"></i>
                         <div>
-                            <p class="text-xs text-slate-400">QQ号 (点击复制)</p>
+                            <p class="text-xs text-slate-400 font-semibold">QQ号 (点击复制)</p>
                             <p class="text-sm font-semibold text-slate-200">2080752235</p>
                         </div>
                     </div>
                     <i class="fa-regular fa-copy text-slate-500 text-sm"></i>
                 </div>
                 <!-- Bilibili -->
-                <div onclick="copyText('23396254', 'B站直播间')" class="cursor-pointer bg-slate-800 hover:bg-slate-700/80 transition-all rounded-xl p-4 flex items-center justify-between border border-slate-700">
+                <div onclick="copyText('3181225', 'B站直播间')" class="cursor-pointer transition-all rounded-xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <i class="fa-brands fa-bilibili text-pink-400 text-2xl w-8 text-center"></i>
                         <div>
-                            <p class="text-xs text-slate-400">B站直播 (7:30 - 22:00)</p>
-                            <p class="text-sm font-semibold text-slate-200">房号: 23396254</p>
+                            <p class="text-xs text-slate-400">B站直播 (10:00——22:00)</p>
+                            <p class="text-sm font-semibold text-slate-200">房号: 3181225</p>
                         </div>
                     </div>
                     <i class="fa-regular fa-copy text-slate-500 text-sm"></i>
                 </div>
             </div>
-
-            <!-- 温馨提示 -->
-            <p class="text-xs text-slate-500 text-center max-w-2xl mx-auto leading-relaxed">
-                * 深渊、末日等限时挑战未拿满星可根据结果比例合理减免。除上述列出的内容之外，其他任何游戏项目均可接，详情可直接私聊原地定价。
-            </p>
         </div>
     </footer>
 
@@ -315,7 +439,7 @@
         </button>
     </div>
 
-    <!-- 左侧目录抽屉 -->
+    <!-- Left side directory drawer -->
     <div id="tocDrawer" class="fixed inset-y-0 left-0 w-full sm:w-80 bg-slate-900 border-r border-slate-800 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
         <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950">
             <h3 class="text-lg font-bold text-indigo-400 flex items-center gap-2">
@@ -346,7 +470,7 @@
             <h3 class="text-lg font-bold text-rose-400 flex items-center gap-2">
                 <i class="fa-solid fa-basket-shopping"></i> 已选代肝清单
             </h3>
-            <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-slate-200 p-1">
+            <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-rose-200 p-1">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
@@ -365,7 +489,7 @@
                 <span id="cartTotalText" class="text-xl font-bold text-rose-400">0 R</span>
             </div>
             <p class="text-[10px] text-slate-500 text-center leading-relaxed">
-                * 估算金额仅基于已标注具体R值（提取首个数字）的项目。若含“分项/议价/自选/面议”项目需私信确定。
+                * 估算金额仅基于已标注具体R值（提取首个数字）的项目。若含“分项/议价/自选/面议/区间价格”项目需私信确定。
             </p>
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="clearCart()" class="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-colors">
@@ -388,164 +512,41 @@
     </div>
 
     <script>
-        // 游戏代肝的所有数据收录 (完全保留所有最新标价与细节，无任何遗漏，统一大写R)
+        // =========================================================================
+        // ======================== 背景图自动匹配配置区 =============================
+        // =========================================================================
+
+        // 1. 各个大版本大类（游戏Tab）全局背景图。切换Tab时会瞬间平滑过渡到对应的全局背景
+        // 绑定为您上传的指定游戏插画
+        const GAME_BACKGROUNDS = {
+            starRail: "https://i2.hdslb.com/bfs/new_dyn/ecbd84afefe5a7ed391a5d2b07b140751340190821.jpg@720w_406h_1e_1c.webp", // 图三：星穹铁道背景图
+            endfield: "https://i2.hdslb.com/bfs/new_dyn/311b0bd41759e7434a7147a6f0bfb2c61265652806.jpg@1052w_!web-dynamic.avif", // 图一：终末地背景图
+            mugen: "https://i2.hdslb.com/bfs/new_dyn/11f016501a6a1da4e9b7faa1820d1e2e3546636978489848.png@720w_406h_1e_1c.webp",  // 图二：异环背景图
+            zzz: "https://i2.hdslb.com/bfs/new_dyn/79b1925c947756d189776dc9cfa423a81636034895.png@1052w_!web-dynamic.avif"   // 绝区零背景图
+        };
+
+        // =========================================================================
+
+        // 游戏代肝的所有数据收录 (完全保留所有最新标价与细节)
         const SERVICES_DATA = {
-            genshin: {
-                specialNotes: [
-                    "所有原铁纯托管号都会帮忙兑换前瞻直播兑换码、月初星尘兑换十抽、立本类",
-                    "托管到时间会次日提醒续费，会列出详细的续费明细，没有及时回复的老板也会继续帮忙打一周再停"
-                ],
-                categories: [
-                    {
-                        name: "日常系列",
-                        items: [
-                            { name: "包月单委托", price: "45R", desc: "纯每日委托托管完成。" },
-                            { name: "包月委托体力", price: "90R", desc: "每天打 180 体力，任意指定随时可换，也可交给我来安排。包括强化装配提升圣遗物，不用担心圣遗物会溢出。每期幽境开启后会优先在里面刷满 1200 体力，并免费帮忙领取完毕所有原石奖励。" },
-                            { name: "新老深渊", price: "40R（20R+20R）", desc: "9-10 可跳过存 5R ○ 剧诗只能打困难存 5R。" },
-                            { name: "加活动", price: "55R+15*2R", desc: "一个大活动两个小活动，大活动为 1040 原石奖励的版本大活动，小活动为 420 原石奖励的两个小活动。" },
-                            { name: "加周本", price: "10R", desc: "打三个周本，任意指定随时可换，也可每周轮换不同的。" },
-                            { name: "尘歌壶领币", price: "10R", desc: "尘歌壶领代币。每日产出积累。" },
-                            { name: "加声望", price: "10R", desc: "声望托管：10R，蒙德璃月 20R，伴月纪闻 5R。" },
-                            { name: "全托", price: "自选", desc: "包含以上所有，日常托管方案也可根据个人要求自由加减任意项目。" }
-                        ]
-                    },
-                    {
-                        name: "魔神任务 (主线各地区拆分卡片)",
-                        items: [
-                            { name: "主线 - 蒙德", price: "15R / 幕", desc: "蒙德区域各幕主线任务。" },
-                            { name: "主线 - 璃月", price: "分项收费", desc: "第一幕 15R，第二幕 20R，第三幕 35R。" },
-                            { name: "主线 - 稻妻", price: "分项收费", desc: "序幕 10R，第一幕 40R，第二幕 10R，第三幕 35R。" },
-                            { name: "主线 - 须弥", price: "分项收费", desc: "第一幕 60R，第二幕 45R，第三幕 25R，第四幕 35R，第五幕 65R。" },
-                            { name: "主线 - 枫丹", price: "分项收费", desc: "第一幕 55R，第二幕 35R，第三幕 35R，第四幕 40R，第五幕 65R。" },
-                            { name: "主线 - 纳塔", price: "分项收费", desc: "第一幕 35R，第二幕 35R，第三幕 40R，第四幕 40R，幕间 20R，第五幕 70R。" },
-                            { name: "主线 - 那德卡莱", price: "分项收费", desc: "序幕 50R，第一幕 90R，第二幕 70R，第三幕 55R，第四幕 80R。" },
-                            { name: "主线 - 旅人系列", price: "分项收费", desc: "我们终将重逢 20R，回响渊底的安魂曲 20R，卡利贝尔 25R，睡前故事 25R，你存在的时空 35R。" },
-                            { name: "主线 - 间章系列", price: "分项收费", desc: "风起鹤归 25R，危疑迷踪 40R，倾落伽蓝 35R，悖理 65R。" }
-                        ]
-                    },
-                    {
-                        name: "传说任务&邀约任务 & 部族纪闻",
-                        items: [
-                            { name: "传说任务", price: "20R / 个", desc: "单角色专属传说故事流程。" },
-                            { name: "邀约事件", price: "25R / 个", desc: "单角色邀约事件全部支线结局通关。" },
-                            { name: "部族纪闻 - 流泉之众", price: "45R", desc: "流泉之众相关部族任务。" },
-                            { name: "部族纪闻 - 悬木人", price: "45R", desc: "悬木人相关部族任务。" },
-                            { name: "部族纪闻 - 回声之子", price: "55R", desc: "回声之子相关部族任务。" },
-                            { name: "部族纪闻 - 花羽会", price: "45R", desc: "花羽会相关部族任务。" },
-                            { name: "部族纪闻 - 烟迷主", price: "55R", desc: "烟迷主相关部族任务。" },
-                            { name: "部族纪闻 - 沃陆之邦", price: "50R", desc: "沃陆之邦相关部族任务。" }
-                        ]
-                    },
-                    {
-                        name: "地图探索必做前置任务",
-                        items: [
-                            { name: "稻妻探索前置", price: "分项收费", desc: "神樱大祓 20R，踏鞴物语 35R，远吕羽氏 20R，月浴之渊 10R，清籁逐雷记 20R，雾海纪行 45R，止水之潘 10R，白夜国晨昏记 30R。" },
-                            { name: "层岩探索前置", price: "50R", desc: "层岩巨渊深游记 50R。" },
-                            { name: "须弥探索前置", price: "分项收费", desc: "森林书 200R （不包括 76 个兰那罗，需要另 + 30R），石锁机关秘话 15R，黄金梦乡 35R，旧语新知 25R，哀歌系列 80R，哀歌后续 40R，善恶系列 80R。" },
-                            { name: "枫丹探索前置", price: "分项收费", desc: "4.0：古老的颜色 30R，水仙的安 30R，水色潮痕 10R，旧世遗音 10R<br>4.1：枫丹科学院纪事 30R，未完成的喜剧 30R，通往奇点之路 10R，海渊封缠的乖离光 10R<br>4.2：水仙的踪迹 50R，伊黎耶的野精灵 20R<br>4.6：谐律上的咏叙诗 35R" },
-                            { name: "沉玉谷探索前置", price: "各散项", desc: "沉玉祝珑 40R，王山行 10R。" },
-                            { name: "纳塔探索前置", price: "分项收费", desc: "5.0：迷林之子 5R，群山的影子 20R，火中取梦的故事 15R，在应许与遗忘之间 20R<br>5.2：流灰之国的迷旅人 35R，浮羽之滨的迷局 10R<br>5.5：朝向炎崖之路 10R，荒落之城的记述人 40R，溯火而归的终局 15R，碎岩及其往事 5R<br>5.8：绘夏系列四幕 70R" },
-                            { name: "那德卡莱探索前置", price: "分项收费", desc: "月一：空月之歌主线序幕和第一、二幕需做完，三个聚所任务 30R（单个 10R，做完前面主线后解锁），是严谨派还是悟性派 15R，月之东日之西 40R，空寂的色彩 5R，转行总是令人焦虑 10R，飞向天空的约定 5R，月谕的半步舞 20R。" }
-                        ]
-                    },
-                    {
-                        name: "角色突破与怪物特产材料 (白/绿/蓝 或 绿/蓝/紫 档位单价)",
-                        items: [
-                            { 
-                                name: "区域突破特产 (168个)", 
-                                price: "0.1R ~ 0.2R / 个", 
-                                desc: "根据特产采集难度分为以下四个收费档位：<br><br>" +
-                                      "<strong>🔴 0.2R / 个（168个 30R）：</strong><br>" +
-                                      "琉璃袋、圣金虫、树王圣体菇<br><br>" +
-                                      "<strong>🟡 0.15R / 个（168个 23R）：</strong><br>" +
-                                      "清心、慕风蘑菇、石珀、夜泊石、晶化骨髓、绯樱绣球、劫波莲、鬼兜虫、悼灵花、赤念果、子探测单元、沙脂蛹、清水玉、万相石、空羽蛾<br><br>" +
-                                      "<strong>🟢 0.12R / 个（168个 20R）：</strong><br>" +
-                                      "蒲公英籽、帕蒂沙兰、幽光星星、湖光铃兰、海露花、琉鳞石<br><br>" +
-                                      "<strong>🔵 0.1R / 个（168个 15R）：</strong><br>" +
-                                      "嘟嘟莲、风车菊、钩钩果、落落莓、塞西莉亚花、小灯草、绝云椒椒、琉璃百合、霓裳花、星螺、鸣草、海灵芝、幽灯蕈、珊瑚真珠、天云草实、苍晶螺、月莲、柔灯铃、虹彩蔷薇、血斛、初露之源、肉龙掌、灼灼彩菊、枯叶紫英、微光角菌、青莓、浪沫羽鳃、云岩裂叶、月落银、霜盏花、便携轴承、冬凌草、松珀香、各种矿"
-                            },
-                            { name: "经典怪物材料 (出场顺序排)", price: "详见细节", desc: "史莱姆（凝液）：0.15R/0.4R/0.7R<br>丘丘人面具（面具）：0.07R/0.2R/0.4R<br>丘丘射手（箭簇）：0.15R/0.45R/1.2R<br>丘丘萨满（绘卷）：0.15R/0.15R/0.3R<br>丘丘暴徒（号角）：0.15R/0.2R/0.4R<br>深渊法师（地脉的旧枝）：0.15R/0.15R/0.35R<br>骗骗花（花蜜）：0.1R/0.15R/0.3R<br>遗迹守卫（混沌装置）：0.15R/0.2R/0.4R<br>盗宝团（鸦印）：0.1R/0.25R/0.4R<br>幼岩龙蜥（骨片）：0.08R/0.1R/0.3R<br>愚人众（徽记）：0.08R/0.1R/0.3R<br>雷莹术士（花粉）：0.08R/0.1R/0.3R<br>讨债人（刀）：0.08R/0.1R/0.3R<br>野伏众（刀镡）：0.1R/0.2R/0.4R" },
-                            { name: "中后期怪物材料 (版本延续)", price: "详见细节", desc: "遗迹机兵（混沌机关）：0.15R/0.2R/0.4R<br>漂浮灵（干核）：0.15R/0.25R/0.4R<br>仕女（棱镜）：0.1R/0.15R/0.35R<br>鲁境之狼（隐兽指爪）：0.15R/0.2R/0.4R<br>黑蛇众（刻像）：0.06R/0.1R/0.3R<br>蕈兽（孢子或菌核）：0.1R/0.3R/0.5R<br>镀金旅团（红绸）：0.08R/0.15R/0.3R<br>遗迹龙兽（混沌容器）：0.15R/0.2R/0.5R<br>元能构造体（棱晶）：0.08R/0.1R/0.3R<br>圣骸兽（横脊）：0.3R/0.4R/0.7R<br>丘丘游侠（待放之花）：0.2R/0.3R/0.5R<br>原海异种（凝珠）：0.1R/0.15R/0.4R<br>发条机关（齿轮）：0.08R/0.15R/0.3R<br>隙境原体（隙间之核）：0.15R/0.2R/0.4R<br>浊水幻灵（浊水的一滴）：0.15R/0.2R/0.5R<br>愚人众役人（怀表）：0.15R/0.3R/0.5R/0.7R" },
-                            { name: "5.x 新地图及最新怪物", price: "详见细节", desc: "幽林兽（鳍翅）：0.15R/0.3R/0.5R/0.7R<br>大灵显化身（意志残片）：0.2R/0.4R/0.8R<br>熔岩游像（聚燃石件）：0.2R/0.4R/0.8R<br>裕源机兵（稔熟轴）：0.3R/0.5R/0.8R<br>纳塔龙众（稚嫩尖齿）：0.1R/0.2R/0.4R<br>部族龙形武士（卫丛木鞘）：0.1R/0.2R/0.4R<br>深邃拟态叶（折光的胚芽）：0.3R/0.4R/0.6R<br>焰壳山鼬（冷裂壳块）：0.15R/0.35R/0.7R<br>愚人众特遣队（磨损的执凭）：0.08R/0.15R/0.3R<br>巡陆艇（毁损机轴）：0.08R/0.15R/0.3R<br>霜夜灵嗣（霜夜的残照）：0.3R/0.4R/0.7R<br>荒野狂猎（幽雾化形）：0.15R/0.4R/0.7R<br>蕴光弁首（光壳骨屑）：0.3R/0.4R/0.7R" }
-                        ]
-                    },
-                    {
-                        name: "其他材料与采集挖矿",
-                        items: [
-                            { name: "收集晶核", price: "8R100 只", desc: "8R / 100 只<br>无跑图角色：10R / 100 只。" },
-                            { name: "挖矿收集", price: "分项收费", desc: "有钟离，莉奈娅：0.15R / 个（100 个 15R）<br>无钟离：0.3R / 个（100 个 30R）。" },
-                            { name: "基础野外采集", price: "分项收费", desc: "木材：0.05R / 个，100 个 5R<br>禽肉：0.15R / 个，100 个 15R<br>电气水晶：0.2R / 个，100 个 20R<br>兽肉：0.06R / 个，100 个 6R。" },
-                            { name: "钓鱼武器 - 鱼叉", price: "20R起", desc: "鱼叉本体 20R，满精 80R，每级精炼 15R。" },
-                            { name: "钓鱼武器 - 水管 / 鱼弓", price: "15R起", desc: "水管/鱼弓本体 15R，满精 55R，每级精炼 10R。" }
-                        ]
-                    },
-                    {
-                        name: "深境螺旋 (新老深渊挑战)",
-                        items: [
-                            { name: "老深渊 1~8 层通关", price: "20R", desc: "一次全通关：20R。" },
-                            { name: "老深渊 9~12 层通关", price: "20R", desc: "单层收费：9 层 2R ○ 10 层 3R ○ 11 层 5R ○ 12 层 10R。9~12 层一共：20R。" },
-                            { name: "老深渊 11层补星", price: "5R全补", desc: "第一间补满 1R，第二间补满 2R，第三间补满 3R。" },
-                            { name: "老深渊 12层补星", price: "10R全补", desc: "第一间补满 4R，第二间补满 6R，第三间补满 8R。" },
-                            { name: "新深渊：真境剧诗", price: "散项", desc: "花的尽力拿多拿。月谕 30 ， 卓越 20R ， 困难 15R。" }
-                        ]
-                    },
-                    {
-                        name: "神瞳/晶石/探索类全收集",
-                        items: [
-                            { name: "风神瞳全收集 (66 个)", price: "30R", desc: "风神瞳全收集" },
-                            { name: "岩神瞳全收集 (131 个)", price: "95R", desc: "岩神瞳全收集" },
-                            { name: "雷神瞳全收集 (181 个)", price: "90R", desc: "雷神瞳全收集" },
-                            { name: "雪山绯红玉髓全收集", price: "40R", desc: "地图上绯红玉髓 80 个" },
-                            { name: "流明晶石收集", price: "40R", desc: "流明晶石共 80 个" },
-                            { name: "草神瞳全收集", price: "135R", desc: "共 271 个（森林 110 个，沙漠 70 个，沙地 55 个，苍漠 36 个）" },
-                            { name: "76 个兰那罗", price: "30R", desc: "全部寻找完毕" },
-                            { name: "净光翎全收集", price: "30R", desc: "共 36 个（甘露池满级供奉，包含任务微暗之光）" },
-                            { name: "水神瞳全收集", price: "135R", desc: "共 271 个（4.0版本 85 个，4.1版本 65 个，4.2版本 66 个，4.6版本 55 个）" },
-                            { name: "苍冥瞳全收集", price: "25R", desc: "苍冥瞳全收集共 50 个" },
-                            { name: "火神瞳全收集", price: "135R", desc: "共 271 个（5.0版本 108 个，5.2版本 54 个，5.5版本 60 个，5.8版本 49 个）" },
-                            { name: "月神瞳收集", price: "50R", desc: "月神瞳目前共 121 个" }
-                        ]
-                    },
-                    {
-                        name: "地图探索度 (至少 1:1 性价比之选)",
-                        items: [
-                            { name: "地图探索说明", price: "1:1 性价比折算", desc: "# 地图探索价格至少与囤石获取量 1:1，性价比之选。满探索不会拿摩拉宝箱。以下价格已包含神瞳，神瞳已单独拿完会减去神瞳价格。可全宝箱一个不漏，每个大地图再 + 5-10R 以及加上有宝箱的世界任务。" },
-                            { name: "常规区 (蒙德/雪山/璃月等)", price: "散项收费", desc: "蒙德：190R ○ 雪山：150R ○ 璃月：420R" },
-                            { name: "层岩巨渊", price: "160R", desc: "层岩巨渊满探索（地表 40R，地下 120R）" },
-                            { name: "稻妻地上六岛 / 渊下宫", price: "460R / 120R", desc: "地上六岛：460R ○ 渊下宫：120R" },
-                            { name: "须弥大探索", price: "890R", desc: "森林 325R，沙漠 200R，沙地 205R，苍漠 160R" },
-                            { name: "枫丹大探索", price: "720R", desc: "4.0 枫丹 240R，4.1 枫丹 182R，4.2 枫丹 170R，4.6 枫丹 130R" },
-                            { name: "沉玉谷大探索", price: "100R", desc: "沉玉谷满探索：100R" },
-                            { name: "纳塔大探索", price: "610R", desc: "5.0 纳塔 245R，5.2 纳塔 120R，5.5 纳塔 130R，5.8 纳塔 115R" },
-                            { name: "那德卡莱大探索", price: "分档收费", desc: "月之二部分：250R" }
-                        ]
-                    }
-                ]
-            },
             starRail: {
-                specialNotes: [
-                    "星铁托管：所有托管类服务，期间免费帮领直播兑换码、版本签到、邮箱奖励！"
-                ],
                 categories: [
                     {
-                        name: "日常托管类",
+                        name: "当前版本",
                         items: [
-                            { name: "每日实训", price: "30R / 月", desc: "日常实训托管。" },
-                            { name: "每日实训 + 体力", price: "60R / 月", desc: "消耗体力 (2R / 天，包限时理智/开拓剂)。" },
-                            { name: "每日实训 + 体力 + 周本 + 勋礼 + 模拟积分", price: "100R / 月", desc: "托管组合档。" },
-                            { name: "每日实训 + 体力 + 周本 + 勋礼 + 模拟积分 + 大小活动", price: "180R / 月", desc: "全清大满贯档。" },
-                            { name: "每日实训 + 委托 + 体力 + 周本 + 勋礼 + 模拟积分 + 活动 + 忘却之庭 + 虚构叙事 + 末日幻影 + 养号", price: "280R / 月", desc: "（规划体力、培养角色、光锥、行迹、仪器）至尊托管档。" }
+                            { name: "4.3主线：沉与生者的忘川", price: "20R", desc: "4.3主线任务" },
+                            { name: "活动：像素飞机大乱斗", price: "40R", desc: "4.3版本限时活动" }
                         ]
                     },
                     {
-                        name: "附加项目",
+                        name: "日常托管",
                         items: [
-                            { name: "模拟宇宙积分", price: "15R / 周", desc: "或包月收：60R / 月。" },
-                            { name: "深渊 (忘却之庭)", price: "30R / 期", desc: "（虚构 / 末日 / 混沌每期都打 30/35/50R）" },
-                            { name: "虚构叙事", price: "5/5/15/15R", desc: "按层数结算费用。" },
-                            { name: "末日幻影", price: "5/5/15/20R", desc: "按层数结算费用。" },
-                            { name: "混沌回忆", price: "10/10/15/15R", desc: "按层数结算费用。" },
-                            { name: "异相仲裁", price: "15R起", desc: "骑士 15R / 关 | 王棋 20/25/30R（过 / 满 / 零）" }
+                            { name: "实训", price: "30R / 月", desc: "每日实训" },
+                            { name: "体委", price: "60R / 月", desc: "体力 +每日实训" },
+                            { name: "普托", price: "125R / 月", desc: "每日实训 + 体力 + 周本 + 勋礼 + 模拟积分。" },
+                            { name: "精托", price: "220R / 月", desc: "每日实训 + 体力 + 周本 + 勋礼 + 模拟积分 + 大小活动 " },
+                            { name: "全托", price: "300R / 月", desc: "每日实训 + 委托 + 体力 + 周本 + 勋礼 + 模拟积分 + 活动 + 忘却之庭 + 虚构叙事 + 末日幻影 + 养号" },
+                            { name: "模拟宇宙积分", price: "15R / 周", desc: "模拟积分18000" }
                         ]
                     },
                     {
@@ -557,61 +558,71 @@
                             { name: "匹诺康尼 全收集", price: "分项收费", desc: "主线 200R | 支线 100R | 宝箱 240R（附带钟表雕像满级 + 支线宝箱 + 折纸小鸟）" },
                             { name: "钟表等级", price: "8R / 级", desc: "逐级获取奖励。" },
                             { name: "翁法罗斯 全收集", price: "分项收费", desc: "3.0-3.7 主线 300R | 3.8 主线 25R | 全支线 120R | 全宝箱 500R（附带供奉满级 + 支线宝箱 + 若虫）" },
-                            { name: "二相乐园 全收集", price: "分项收费", desc: "主线 (4.0+4.1+4.2) 100R | 全支线 100R | 全宝箱 240R" }
+                            { name: "二相乐园 全收集", price: "分项收费", desc: "主线 (4.0+4.1+4.2+4.3) 120R | 全支线 100R | 全宝箱 240R" }
                         ]
                     },
                     {
                         name: "常驻活动",
                         items: [
-                            { name: "博物馆（40~60 金人卷）", price: "20R", desc: "常驻活动攻略。" },
-                            { name: "狐斋志异", price: "100R", desc: "常驻活动攻略。" },
-                            { name: "美梦往事（哈努兄弟越狱记）", price: "40R", desc: "常驻活动攻略。" },
-                            { name: "宇宙家装指南", price: "50R", desc: "常驻活动攻略。" },
-                            { name: "嗷呜嗷呜事务所", price: "50R", desc: "常驻活动攻略。" },
-                            { name: "美梦与圣杯（拳王测试赛）", price: "20R", desc: "常驻活动攻略。" },
-                            { name: "评书奇谭（异宠遗失）", price: "30R", desc: "常驻活动攻略。" },
-                            { name: "折纸小鸟对对碰", price: "80R", desc: "常驻活动攻略。" },
-                            { name: "星天演武仪典", price: "15R", desc: "（庙鱼削闸兴满堂）常驻活动攻略。" },
-                            { name: "豹豹大作战", price: "50R", desc: "常驻活动攻略。" },
-                            { name: "迷境大饭店（表演赛）", price: "20R", desc: "常驻活动攻略。" },
-                            { name: "以太战线", price: "40R", desc: "常驻活动攻略。" },
-                            { name: "杯中逸事", price: "70R", desc: "常驻活动攻略。" },
-                            { name: "初花习剑录", price: "70R", desc: "常驻活动攻略。" },
-                            { name: "音律狩猎忍法帖", price: "50R", desc: "常驻活动攻略。" },
-                            { name: "地宫迷踪", price: "30R", desc: "常驻活动攻略。" },
-                            { name: "银河棒球侠", price: "60R", desc: "常驻活动攻略。" },
-                            { name: "天气真好，养它", price: "50R", desc: "常驻活动攻略。" }
+                            { name: "又上骰了！战力党！", price: "60R", desc: "版本常驻活动" },
+                            { name: "尘灵乱世录", price: "50R", desc: "版本常驻活动" },
+                            { name: "上骰了！战力党！", price: "40R", desc: "版本常驻活动" },
+                            { name: "黄金嗷呜大师赛", price: "30R", desc: "版本常驻活动" },
+                            { name: "点心糕饼向前冲", price: "30R", desc: "版本常驻活动" },
+                            { name: "天气真好，养它！", price: "30R", desc: "版本常驻活动" },
+                            { name: "命运今晚留下来", price: "80R", desc: "版本常驻活动" },
+                            { name: "美梦与圣杯", price: "80R", desc: "版本常驻活动" },
+                            { name: "折纸小鸟对对碰", price: "60R", desc: "版本常驻活动" },
+                            { name: "银河球棒侠传说：魔王篇", price: "80R", desc: "版本常驻活动" },
+                            { name: "豹豹碰碰大作战", price: "60R", desc: "版本常驻活动" },
+                            { name: "嗷呜嗷呜事务所", price: "30R", desc: "版本常驻活动" },
+                            { name: "地宫迷踪", price: "25R", desc: "版本常驻活动" },
+                            { name: "音律狩猎忍法帖", price: "50R", desc: "版本常驻活动" },
+                            { name: "星天演武仪典", price: "100R", desc: "版本常驻活动" },
+                            { name: "初花习剑录", price: "80R", desc: "版本常驻活动" },
+                            { name: "折纸小鸟对对碰", price: "70R", desc: "版本常驻活动" },
+                            { name: "钟表小子美梦往事", price: "50R", desc: "版本常驻活动" },
+                            { name: "杯中逸事", price: "60R", desc: "版本常驻活动" },
+                            { name: "哈努兄弟越狱记", price: "25R", desc: "版本常驻活动" },
+                            { name: "评书奇谭", price: "30R", desc: "版本常驻活动" },
+                            { name: "磐岩镇斗技表演赛", price: "30R", desc: "版本常驻活动" },
+                            { name: "狐斋志异", price: "100R", desc: "版本常驻活动" },
+                            { name: "以太战线", price: "100R", desc: "版本常驻活动" },
+                            { name: "金人旧巷市麈喧", price: "60R", desc: "版本常驻活动" },
+                            { name: "冬城博物珍奇簿", price: "60R", desc: "版本常驻活动" },
+                            { name: "磐岩镇超级联赛", price: "20R", desc: "版本常驻活动" }
                         ]
                     },
                     {
                         name: "模拟宇宙 DLC（全星琼奖励）",
                         items: [
-                            { name: "寰宇蝗灾", price: "300R", desc: "全拿星琼奖励。" },
-                            { name: "黄金与机械", price: "300R", desc: "全拿星琼奖励。" },
-                            { name: "千面宇宙", price: "300R", desc: "全拿星琼奖励。" },
-                            { name: "不可知域", price: "300R", desc: "全拿星琼奖励。" },
-                            { name: "货币战争", price: "300R", desc: "全拿星琼奖励。" }
+                            { name: "寰宇蝗灾小全包", price: "350R", desc: "13个章节+普通行者之道(不包括最后一个)+全首通奖励" },
+                            { name: "黄金与机械小全包", price: "350R", desc: "全秘闻+全骰面+测试星琼全拿+全首通奖励" },
+                            { name: "差分宇宙", price: "", desc: "全拿星琼奖励。" },
+                            { name: "不可知域小全包", price: "320R", desc: "思维边界满级+仿真星琼拿完+全开拓秘闻+重整模型全奖励+全首通奖励" },
+                            { name: "货币战争", price: "350R", desc: "数据银行星琼拿完+预期收益星琼拿完+羁绊链路拿完" }
                         ]
                     }
                 ]
             },
             endfield: {
-                specialNotes: [
-                    "终末地托管：所有托管类服务，期间免费帮领直播兑换码、版本签到、邮箱奖励！"
-                ],
                 categories: [
                     {
-                        name: "日常托管类",
+                        name: "当前版本",
                         items: [
-                            { name: "包月单委托", price: "45R", desc: "日常+信用点兑换+收菜。" },
-                            { name: "包月实训加体力", price: "80R", desc: "日常+体力+信用点兑换+收菜。" },
-                            { name: "商路倒卖", price: "10R", desc: "跑商倒卖日常托管。" },
-                            { name: "委托送货", price: "10R", desc: "送货委托完成。" },
-                            { name: "环境检测", price: "10R", desc: "检测项目托管。" },
-                            { name: "周常 4 次", price: "25R", desc: "周常托管。" },
-                            { name: "限时活动", price: "60R", desc: "限时活动清剿。" },
+                            { name: "演武集算", price: "20R", desc: "1.3版本活动。" },
+                            { name: "以拳问心", price: "15R", desc: "重要任务委托。" },
+                            { name: "寻剑幽谷", price: "30R", desc: "1.3版本活动。" }
+                        ]
+                    },
+                    {
+                        name: "日常托管",
+                        items: [
+                            { name: "日常", price: "45R/月", desc: "日常 + 信用点兑换。" },
+                            { name: "普托", price: "90R/月", desc: "日常 + 体力+信用点兑换。" },
+                            { name: "精托", price: "210R/月", desc: "日常 + 体力+信用点兑换 + 基地收菜 + 倒卖 + 环境检测 + 每周事务 + 版本活动。" },                           
+                            { name: "全托", price: "400R/月", desc: "日常 + 体力 + 信用点兑换 + 收菜 + 倒卖 + 环境检测 + 每周事务 + 版本活动 + 影拓丰碑 + 蚀像寻遗 + 养成。" },
                             { name: "影拓丰碑", price: "分项收费", desc: "普通：5R / 关 | 苦难：10R / 关。" },
-                            { name: "全托托管套餐", price: "400R", desc: "以上所有日常+养成+蚀像寻遗。" }
                         ]
                     },
                     {
@@ -636,52 +647,50 @@
                     {
                         name: "主线剧情任务 (精密关卡拆分卡片)",
                         items: [
-                            { name: "主线：打包序章", price: "25R", desc: "主线起点任务。" },
-                            { name: "主线：基地解围", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：谷地重启", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：重整旗鼓其一", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：重整旗鼓其二", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：西行入谷庇护之所", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：建立据点", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：踏破雾火要塞决战（boss罗丹）", price: "25R", desc: "主线罗丹BOSS挑战关。" },
-                            { name: "主线：开拓前路", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：修缮进程", price: "7R", desc: "主线剧情任务。" },
-                            { name: "主线：再度启程（18 级）", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：穿越研究园", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：推开园门园区穿行", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：诡楼寻踪山道下行", price: "15R", desc: "主线剧情任务。" },
-                            { name: "主线：矿脉断章", price: "15R", desc: "主线剧情任务。" },
-                            { name: "主线：踏足矿脉世纪摇篮", price: "15R", desc: "（走走停停虫哥带路 三位一体）主线关卡。" },
-                            { name: "主线：初入终局 烙铁灼痕 前线奔袭", price: "20R", desc: "主线剧情大关。" },
-                            { name: "主线：未熄火种（白垩界卫）余波暂平", price: "20R", desc: "神秘信号主线剧情大关。" },
-                            { name: "主线：四方会议", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：初探武陵", price: "20R", desc: "主线剧情任务。" },
-                            { name: "主线：误入清波寨", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：前往武陵城", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：惊鸿一瞥", price: "20R", desc: "主线剧情大关。" },
-                            { name: "主线：东风就绪（开武陵中枢）", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：穆如春风", price: "15R", desc: "主线剧情任务。" },
-                            { name: "主线：潮涌汹汹", price: "15R", desc: "主线剧情任务。" },
-                            { name: "主线：无患之患", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：意外来袭（1.1汤汤）", price: "5R", desc: "1.1汤汤专属主线。" },
-                            { name: "主线：深入迷局", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：分道扬镳", price: "20R", desc: "主线剧情大关。" },
-                            { name: "主线：旧泉涸处新潮生（汤汤哥）", price: "10R", desc: "1.1汤汤哥大主线关卡。" },
-                            { name: "主线：风平水不静", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：又是一波起", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：逐波向水中", price: "2R", desc: "主线剧情任务。" },
-                            { name: "主线：水清顽石现", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：共饮一江水", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：水火不容（1.2庄）", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：致命邀约", price: "7R", desc: "主线剧情任务。" },
-                            { name: "主线：片缕幻影", price: "7R", desc: "主线剧情任务。" },
-                            { name: "主线：静侯光临-自由意志（迷宫）", price: "15R", desc: "迷宫大主线关卡。" },
-                            { name: "主线：浪白风初起", price: "10R", desc: "主线剧情任务。" },
-                            { name: "主线：阵外潮起声犹震（聂菲斯）", price: "面议R", desc: "阵外潮起声犹震（聂菲斯 牢聂啊牢聂）主线高难决战。" },
-                            { name: "主线：当时携手处", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：墙崩因隙", price: "5R", desc: "主线剧情任务。" },
-                            { name: "主线：终则有始-志同道合", price: "25R", desc: "主线剧情大关。" },
-                            { name: "主线：1.3最新主线", price: "30R", desc: "1.3版本主线大关。" }
+                            { name: "主线：打包序章", price: "25R", desc: "1.0主线任务" },
+                            { name: "主线：基地解围", price: "10R", desc: "1.0主线任务" },
+                            { name: "主线：谷地重启", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：重整旗鼓其一", price: "10R", desc: "1.0主线任务" },
+                            { name: "主线：重整旗鼓其二", price: "10R", desc: "1.0主线任务" },
+                            { name: "主线：西行入谷庇护之所", price: "10R", desc: "1.0主线任务" },
+                            { name: "主线：建立据点", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：踏破雾火要塞决战（boss罗丹）", price: "25R", desc: "1.0主线任务" },
+                            { name: "主线：开拓前路", price: "10R", desc: "1.0主线任务" },
+                            { name: "主线：修缮进程", price: "7R", desc: "1.0主线任务" },
+                            { name: "主线：再度启程（18 级）", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：穿越研究园", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：推开园门园区穿行", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：诡楼寻踪山道下行", price: "15R", desc: "1.0主线任务" },
+                            { name: "主线：矿脉断章", price: "15R", desc: "1.0主线任务" },
+                            { name: "主线：踏足矿脉世纪摇篮", price: "15R", desc: "1.0主线任务" },
+                            { name: "主线：初入终局 烙铁灼痕 前线奔袭", price: "20R", desc: "1.0主线任务" },
+                            { name: "主线：未熄火种（白垩界卫）余波暂平", price: "20R", desc: "1.0主线任务" },
+                            { name: "主线：四方会议", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：初探武陵", price: "20R", desc: "1.0主线任务" },
+                            { name: "主线：误入清波寨", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：前往武陵城", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：惊鸿一瞥", price: "20R", desc: "1.0主线任务" },
+                            { name: "主线：东风就绪（开武陵中枢）", price: "10R", desc: "1.0主线任务" },
+                            { name: "主线：穆如春风", price: "15R", desc: "1.0主线任务" },
+                            { name: "主线：潮涌汹汹", price: "15R", desc: "1.0主线任务" },
+                            { name: "主线：无患之患", price: "5R", desc: "1.0主线任务" },
+                            { name: "主线：意外来袭（1.1汤汤）", price: "5R", desc: "1.1主线任务" },
+                            { name: "主线：深入迷局", price: "5R", desc: "1.1主线任务" },
+                            { name: "主线：分道扬镳", price: "20R", desc: "1.1主线任务" },
+                            { name: "主线：旧泉涸处新潮生（汤汤哥）", price: "10R", desc: "1.1主线任务" },
+                            { name: "主线：风平水不静", price: "5R", desc: "1.1主线任务" },
+                            { name: "主线：又是一波起", price: "5R", desc: "1.1主线任务" },
+                            { name: "主线：逐波向水中", price: "2R", desc: "1.1主线任务" },
+                            { name: "主线：水清顽石现", price: "10R", desc: "1.1主线任务" },
+                            { name: "主线：共饮一江水", price: "5R", desc: "1.1主线任务" },
+                            { name: "主线：水火不容（1.2庄）", price: "5R", desc: "1.2主线任务" },
+                            { name: "主线：致命邀约", price: "7R", desc: "1.2主线任务" },
+                            { name: "主线：片缕幻影", price: "7R", desc: "1.2主线任务" },
+                            { name: "主线：静侯光临-自由意志（迷宫）", price: "15R", desc: "1.2主线任务" },
+                            { name: "主线：浪白风初起+阵外潮起声犹震（聂菲斯）", price: "15R", desc: "1.2主线任务" },
+                            { name: "主线：当时携手处", price: "5R", desc: "1.2主线任务" },
+                            { name: "主线：墙崩因隙", price: "5R", desc: "1.2主线任务" },
+                            { name: "主线：终则有始-志同道合", price: "25R", desc: "1.2主线任务" }
                         ]
                     },
                     {
@@ -700,7 +709,7 @@
                             { name: "重要任务：离群之狼", price: "15R", desc: "重要任务流程。" },
                             { name: "重要任务：爱呐喊和原型机", price: "20R", desc: "重要任务流程。" },
                             { name: "重要任务：信使的信", price: "10R", desc: "重要任务流程。" },
-                            { name: "重要任务：机器人之梦", price: "10R", desc: "重要任务流程。" },
+                            { name: "重要任务 : 机器人之梦", price: "10R", desc: "重要任务流程。" },
                             { name: "重要任务：内部敌人 (两天)", price: "15R", desc: "重要任务流程。" },
                             { name: "重要任务：高空救援", price: "10R", desc: "重要任务流程。" },
                             { name: "重要任务：虫不语", price: "30R", desc: "重要任务流程。" },
@@ -739,7 +748,7 @@
                             { name: "次要任务：水中诡事", price: "7R", desc: "次要任务流程。" },
                             { name: "次要任务：检修无小事", price: "7R", desc: "次要任务流程。" },
                             { name: "次要任务：池中宝", price: "7R", desc: "次要任务流程。" },
-                            { name: "次要任务：出师三剑", price: "7R", desc: "次要任务流程。" },
+                            { name: "次要任务 : 出师三剑", price: "7R", desc: "次要任务流程。" },
                             { name: "次要任务：钟鸣三到", price: "5R", desc: "次要任务流程。" },
                             { name: "次要任务：侵蚀中的呼救", price: "5R", desc: "次要任务流程。" },
                             { name: "次要任务：粉丝见面会", price: "7R", desc: "次要任务流程。" },
@@ -758,13 +767,181 @@
                         ]
                     }
                 ]
+            },
+            mugen: {
+                categories: [
+                    {
+                        name: "当前版本",
+                        items: [
+                            { name: "1.1主线", price: "25R", desc: "1.1版本主线任务。" },
+                            { name: "活动:黑暗赛车界", price: "20R ~ 50R", desc: "只拿环石 20R，全拿 50R。1.1版本活动" },
+                            { name: "活动:争锋赏宴", price: "15R", desc: "1.1版本活动" },
+                            { name: "活动:向阳游记", price: "20R", desc: "1.1版本活动" },
+                            { name: "活动:十三日梦醒", price: "7R", desc: "1.1版本活动" },
+                            { name: "活动:格斗争霸赛", price: "20R", desc: "1.1版本活动" }
+                        ]
+                    },
+                    {
+                        name: "日常托管",
+                        items: [
+                            { name: "体委", price: "75R/月", desc: "包含： 咖啡店方斯 + 体力 + 每日委托。" },
+                            { name: "普托", price: "110R/月", desc: "包含：金币 + 咖啡店方斯 + 消耗体力 + 每日委托 + 喂金鱼 + 周本 + 祈福树。" }, 
+                            { name: "精托", price: "200R/月", desc: "包含：金币 + 咖啡店方斯 + 消耗体力 + 每日委托 + 喂金鱼 + 祈福树 + 周本 + 版本活动。" },                           
+                            { name: "全托", price: "350R/月", desc: " 金币 + 咖啡店方斯 + 消耗体力 + 每日委托 + 喂金鱼 + 都市活力 + 粉爪 + 祈福树 + 周本 + 版本活动 + 深渊 + 角色养成配置。" },
+                            { name: "四周都市活力", price: "20R / 期", desc: "都市活力700。" },
+                            { name: "粉爪大劫案", price: "25R / 期", desc: "粉爪两周一期100w 积分" },
+                            { name: "深渊挑战", price: "4R ~ 5R / 层", desc: "深渊 6-9层 4R / 层 ○ 10层 5R / 层。" },
+                            { name: "周本", price: "20R/月", desc: "2R/次。" },                            
+                        ]
+                    },
+                    {
+                        name: "主线任务 (时间轴)",
+                        items: [
+                            { name: "序章：不虞亦先兆", price: "20R", desc: "1.0主线任务" },
+                            { name: "生意经与招财宝", price: "10R", desc: "1.0主线任务" },
+                            { name: "照相馆的异常", price: "15R", desc: "1.0主线任务" },
+                            { name: "从捏造开始的恋爱", price: "10R", desc: "1.0主线任务" },
+                            { name: "准备顺势告白", price: "10R", desc: "1.0主线任务" },
+                            { name: "成交？成交！", price: "15R", desc: "1.0主线任务" },
+                            { name: "拍卖行的阴谋", price: "25R", desc: "1.0主线任务" },
+                            { name: "讨债人", price: "10R", desc: "1.0主线任务" },
+                            { name: "红字的研究", price: "15R", desc: "1.0主线任务" },
+                            { name: "过往的幻境", price: "10R", desc: "1.0主线任务" },
+                            { name: "家危速归", price: "10R", desc: "1.1主线任务" },
+                            { name: "游梦洄廊（莳）", price: "15R", desc: "1.1主线任务" }
+                        ]
+                    },
+                    {
+                        name: "番外任务",
+                        items: [
+                            { name: "月光当铺", price: "20R", desc: "特色番外剧情任务通关。" },
+                            { name: "不言不知秋", price: "20R", desc: "特色番外剧情任务通关。" },
+                            { name: "番茄酱爆走现场实录", price: "20R", desc: "特色番外剧情任务通关。" },
+                            { name: "某传奇乐队（吗？）的第一页", price: "30R", desc: "特色番外大剧情任务通关。" }
+                        ]
+                    },
+                    {
+                        name: "支线任务 - 桥间地",
+                        items: [
+                            { name: "异象失踪事件", price: "3R", desc: "桥间地探索支线" },
+                            { name: "中古店的镜子", price: "3R", desc: "桥间地探索支线" },
+                            { name: "再见，黄旗赛段", price: "3R", desc: "桥间地探索支线" },
+                            { name: "爱丽丝烘培坊", price: "10R", desc: "桥间地探索支线" },
+                            { name: "唱片店的异动", price: "3R", desc: "唱片店的异动 3R" },
+                            { name: "棉绒绒之乱", price: "10R", desc: "桥间地探索支线" },
+                            { name: "新手摄影师（三个摄影任务）", price: "6R", desc: "桥间地探索支线" },
+                            { name: "归途", price: "10R", desc: "桥间地探索支线" },
+                            { name: "电话亭也颠倒？", price: "3R", desc: "电话亭也颠倒？ 3R" },
+                            { name: "拜访艺术家", price: "10R", desc: "桥间地探索支线" },
+                            { name: "雨夜怪诞", price: "5R", desc: "桥间地探索支线" },
+                            { name: "塔吉多的求救短信", price: "3R", desc: "桥间地探索支线" },
+                            { name: "市民证", price: "15R", desc: "桥间地探索支线" },
+                            { name: "幽灵列车的好乘客指南", price: "5R", desc: "桥间地探索支线" }
+                        ]
+                    },
+                    {
+                        name: "支线任务 - 新赫兰德",
+                        items: [
+                            { name: "歧骸语专业译员", price: "5R", desc: "新赫兰德区域支线" },
+                            { name: "开灯，当秋千晃了一千下", price: "15R", desc: "新赫兰德区域支线" },
+                            { name: "英雄未必在光辉时刻到来", price: "10R", desc: "新赫兰德区域支线" }
+                        ]
+                    },
+                    {
+                        name: "支线任务 - 米格尔区",
+                        items: [
+                            { name: "幽灵车神", price: "15R", desc: "米格尔区区域支线" },
+                            { name: "给小书迷的礼物", price: "10R", desc: "米格尔区区域支线" },
+                            { name: "【收集冷气】“送给你的逆行诗”", price: "15R", desc: "米格尔区区域支线" }
+                        ]
+                    },
+                    {
+                        name: "支线任务 - 1.1向阳岛",
+                        items: [
+                            { name: "向阳岛异闻", price: "3R / 个", desc: "向阳岛区域专属异闻委托。" }
+                        ]
+                    },
+                    {
+                        name: "其他",
+                        items: [
+                            { name: "BOSS材料", price: "0.5R / 次", desc: "按照通关刷取次数计费。" },
+                            { name: "21赠礼", price: "1R / 个", desc: "单个赠礼获取/收集托管。" }
+                        ]
+                    }
+                ]
+            },
+            zzz: {
+                categories: [
+                    {
+                        name: "当前版本",
+                        items: [
+                            { name: "3.0主线：某个梦游者的自白", price: "40R", desc: "3.0主线任务" },
+                            { name: "活动：天枢情报图册", price: "35R", desc: "3.0版本活动" },
+                            { name: "活动：烈阳倾覆之日", price: "35R", desc: "3.0版本活动" }
+                        ]
+                    },
+                    {
+                        name: "日常托管",
+                        items: [
+                            { name: "单委托", price: "40R / 月", desc: "每日委托:咖啡 + 录像店 + 刮刮乐" },
+                            { name: "体委", price: "80R / 月", desc: "体力 + 咖啡 + 录像店 + 刮刮乐" },
+                            { name: "精托", price: "280R / 月", desc: "日常体委 + 周本 + 空洞 + 版本大小活动 + 丽都周纪" },
+                            { name: "全托托管套餐", price: "360R / 月", desc: "体委 + 周本 + 空洞 + 版本大小活动 + 丽都周纪 + 式舆防卫战 + 危局 + 角色养成" },
+                            { name: "恶名狩猎（周本）", price: "20R / 月", desc: "周本挑战（2R / 次）" },
+                            { name: "零号空洞", price: "15R / 期", desc: "零号空洞周奖励" },
+                        ]
+                    },
+                    {
+                        name: "主线剧情 (时间轴)",
+                        items: [
+                            { name: "序章：生意×诡异×道义", price: "50R", desc: "第一季 序章主线剧情" },
+                            { name: "第一章：猫的失物", price: "30R", desc: "第一季 第一章主线剧情" },
+                            { name: "第一章：间章", price: "60R", desc: "第一季 第一章间章剧情" },
+                            { name: "第二章：在空洞的中心呼唤", price: "50R", desc: "第一季 第二章主线剧情" },
+                            { name: "第二章：间章非常任务", price: "20R", desc: "第一季 第二章间章非常任务" },
+                            { name: "第三章：危楼夜寻踪", price: "50R", desc: "第一季 第三章主线剧情" },
+                            { name: "独家视界：卧底蓝调", price: "40R", desc: "独家视界剧情流程" },
+                            { name: "第四章：火狱骑行", price: "50R", desc: "第一季 第四章主线剧情" },
+                            { name: "第五章：星流霆击", price: "50R", desc: "第一季 第五章主线剧情" },
+                            { name: "独家视界：闪耀的此刻", price: "45R", desc: "独家视界剧情流程" },
+                            { name: "第一季尾音：将眼泪与过往一同埋葬上", price: "60R", desc: "第一季 尾声篇章（上）" },
+                            { name: "第一季尾音：将眼泪与过往一同埋葬下", price: "40R", desc: "第一季 尾声篇章（下）" },
+                            { name: "第二季 第一章：云霞同归处", price: "60R", desc: "第二季 第一章主线剧情" },
+                            { name: "第二季 第二章：迟吟的浪涌", price: "50R", desc: "第二季 第二章主线剧情" },
+                            { name: "第二季 第三章：不要温和地走入那良夜", price: "60R", desc: "第二季 第三章主线剧情" },
+                            { name: "第二季 第四章：可曾记得梦", price: "50R", desc: "第二季 第四章主线剧情" },
+                            { name: "第二季 第五章：将临未抵的深渊", price: "60R", desc: "第二季 第五章主线剧情" },
+                            { name: "第二季 第六章：微光引灯时", price: "50R", desc: "第二季 第六章主线剧情" },
+                            { name: "第二季 间章：旧梦的安可曲", price: "30R", desc: "第二季 间章剧情" },
+                            { name: "第二季 尾音：新艾利都日落时上", price: "20R", desc: "第二季 尾声篇章（上）" },
+                            { name: "第二季 尾音：新艾利都日落时下", price: "20R", desc: "第二季 尾声篇章（下）" },
+                            { name: "第三季 第一章：某个梦游者的自白", price: "40R", desc: "第三季 第一章主线剧情" }
+                        ]
+                    },
+                    {
+                        name: "常驻活动",
+                        items: [
+                            { name: "滚谈寻鲜记", price: "35R", desc: "常驻活动流程攻略" },
+                            { name: "妄想协鸣此刻", price: "60R", desc: "常驻活动流程攻略" },
+                            { name: "空明寻剑录", price: "60R", desc: "常驻活动流程攻略" },
+                            { name: "仲夏游梦绮谭", price: "120R", desc: "常驻活动流程攻略" },
+                            { name: "霸主的欢宴", price: "60R", desc: "常驻活动流程攻略" },
+                            { name: "直到苍白之地", price: "150R", desc: "常驻活动流程攻略" },
+                            { name: "残梦未尽之时", price: "60R", desc: "常驻活动流程攻略" },
+                            { name: "厄匹斯极钓大师赛", price: "80R", desc: "常驻活动流程攻略" },
+                            { name: "缘于引力的邂逅", price: "35R", desc: "常驻活动流程攻略" },
+                            { name: "花语未明之言", price: "40R", desc: "常驻活动流程攻略" },
+                            { name: "如愿璀璨之日", price: "100R", desc: "常驻活动流程攻略" }
+                        ]
+                    }
+                ]
             }
         };
 
         // 购物车数组，保存已选代的项目
         let cart = [];
 
-        let currentActiveGame = 'genshin';
+        let currentActiveGame = 'starRail';
 
         // 提取价格的辅助函数
         function parsePrice(priceStr) {
@@ -781,9 +958,10 @@
 
         // 获取游戏中文友好名称
         function getGameFriendlyName(gameKey) {
-            if (gameKey === 'genshin') return '原神';
             if (gameKey === 'starRail') return '星穹铁道';
             if (gameKey === 'endfield') return '终末地';
+            if (gameKey === 'mugen') return '异环';
+            if (gameKey === 'zzz') return '绝区零';
             return gameKey;
         }
 
@@ -936,14 +1114,14 @@
                         <p class="text-xs text-rose-400 font-semibold mt-1">价目: ${item.price}</p>
                     </div>
                     <button onclick="removeCartItem('${item.id}')" class="text-slate-400 hover:text-rose-400 p-1 transition-colors">
-                        <i class="fa-regular fa-trash-can text-sm"></i>
+                        <i class="fa-solid fa-trash-can text-sm"></i>
                     </button>
                 `;
                 listContainer.appendChild(itemDiv);
             });
 
             // 累加总额
-            totalText.innerHTML = `${total.toFixed(1).replace(/\.0$/, '')} R ${hasComplexPrice ? '<span class="text-xs text-slate-400 font-normal">(含自选/分项/面议)</span>' : ''}`;
+            totalText.innerHTML = `${total.toFixed(1).replace(/\.0$/, '')} R ${hasComplexPrice ? '<span class="text-xs text-slate-400 font-normal">(含自选/分项/面议/区间价格)</span>' : ''}`;
         }
 
         // 一键生成与复制预约清单
@@ -976,7 +1154,7 @@
 
             orderText += `-----------------------\n`;
             orderText += `📊 已选项目总数: ${cart.length} 项\n`;
-            orderText += `💰 估算合计金额: ${total.toFixed(1).replace(/\.0$/, '')} R ${hasComplexPrice ? '(包含部分分项收费/自选项目/面议)' : ''}\n\n`;
+            orderText += `💰 估算合计金额: ${total.toFixed(1).replace(/\.0$/, '')} R ${hasComplexPrice ? '(包含部分分项收费/自选项目/面议/区间价格)' : ''}\n\n`;
             orderText += `💬 我的联系信息:\n`;
             orderText += `  ▫️ QQ: 2080752235\n`;
             orderText += `  ▫️ 微信: ppwq1115\n`;
@@ -993,7 +1171,7 @@
                 setTimeout(() => {
                     toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
                     toast.classList.remove('opacity-100', 'translate-y-0');
-                }, 3500);
+                }, 2500);
             }).catch(() => {
                 alert('复制失败，请截屏发给代肝确认订单。');
             });
@@ -1001,9 +1179,25 @@
 
         // 切换标签
         function switchGame(gameKey) {
+            // 新增：切换板块时，自动清空搜索输入框，恢复全局完整展现
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            // 新增：隐藏可能展开的搜索建议下拉框
+            const suggestions = document.getElementById('searchSuggestions');
+            if (suggestions) {
+                suggestions.classList.add('hidden');
+            }
+
             currentActiveGame = gameKey;
             
-            const tabs = ['genshin', 'starRail', 'endfield'];
+            // 切换大类（游戏Tab）时，同步更换该游戏专属的全局网页背景图
+            if (GAME_BACKGROUNDS[gameKey]) {
+                document.body.style.backgroundImage = `url('${GAME_BACKGROUNDS[gameKey]}')`;
+            }
+
+            const tabs = ['starRail', 'endfield', 'mugen', 'zzz'];
             tabs.forEach(tab => {
                 const btn = document.getElementById(`tab-${tab}`);
                 if (tab === gameKey) {
@@ -1143,6 +1337,7 @@
                 icon.className = 'fa-solid fa-moon';
                 localStorage.setItem('theme', 'dark');
             }
+            renderData(); // 主题切换时重新渲染以更新卡片背景罩色调
         }
 
         // 渲染页面数据
@@ -1153,19 +1348,13 @@
 
             const gameData = SERVICES_DATA[currentActiveGame];
 
-            // 渲染公告提示
-            const noticeBanner = document.getElementById('noticeBanner');
-            if (gameData.specialNotes && gameData.specialNotes.length > 0) {
-                noticeBanner.classList.remove('hidden');
-                let notesHtml = `<div class="space-y-1">`;
-                gameData.specialNotes.forEach(note => {
-                    notesHtml += `<p class="flex items-start gap-2"><i class="fa-solid fa-circle-info mt-1 text-rose-400 shrink-0"></i> <span>${note}</span></p>`;
-                });
-                notesHtml += `</div>`;
-                noticeBanner.innerHTML = notesHtml;
-            } else {
-                noticeBanner.classList.add('hidden');
-            }
+            // 检查当前是否为浅色模式
+            const isLightTheme = document.body.classList.contains('light-theme');
+            
+            // 动态配置卡片背景渐变遮罩，在卡片背后的角色/版本图上盖一层半透明罩，防止文字与亮图冲突，保障可读性
+            const overlayGradient = isLightTheme
+                ? 'linear-gradient(to bottom, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.96))'
+                : 'linear-gradient(to bottom, rgba(17, 24, 39, 0.82), rgba(17, 24, 39, 0.95))';
 
             // 动态生成左侧抽屉内的目录跳转列表 (搜索状态下隐藏)
             const tocItemsList = document.getElementById('tocItemsList');
@@ -1213,6 +1402,73 @@
                 `;
                 categorySection.innerHTML = titleHtml;
 
+                // 【特殊编排模式】 异环 / 终末地 / 绝区零 主线任务 - 直时间轴 (只有无搜索状态下触发)
+                const isTimelineLayout = (!searchInput) && (
+                    (currentActiveGame === 'mugen' && category.name === "主线任务 (时间轴)") ||
+                    (currentActiveGame === 'endfield' && category.name === "主线剧情任务 (精密关卡拆分卡片)") ||
+                    (currentActiveGame === 'zzz' && category.name === "主线剧情 (时间轴)")
+                );
+
+                if (isTimelineLayout) {
+                    const timelineContainer = document.createElement('div');
+                    timelineContainer.className = 'relative max-w-3xl mx-auto py-4 space-y-6';
+
+                    // 垂直时间轴主导线
+                    const line = document.createElement('div');
+                    line.className = `absolute left-4 sm:left-5 top-2 bottom-2 w-0.5 bg-gradient-to-b from-rose-500 to-indigo-500 ${isLightTheme ? 'opacity-40' : 'opacity-60'}`;
+                    timelineContainer.appendChild(line);
+
+                    filteredItems.forEach((item, idx) => {
+                        const itemId = `${currentActiveGame}-${category.name}-${item.name}`;
+                        const isSelected = cart.some(cartItem => cartItem.id === itemId);
+                        const cardId = `${currentActiveGame}-card-${index}-${idx}`;
+
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'relative pl-10 sm:pl-12';
+
+                        // 区分深浅色以及选中状态的圆圈颜色
+                        const dotColor = isSelected 
+                            ? 'bg-rose-500 text-white ring-rose-500/20' 
+                            : (isLightTheme 
+                                ? 'bg-slate-200 text-slate-600 ring-slate-100' 
+                                : 'bg-slate-800 text-slate-400 ring-slate-800/30');
+                        
+                        const dotBorderClass = isLightTheme ? 'border-white' : 'border-slate-950';
+
+                        itemDiv.innerHTML = `
+                            <!-- 时间轴节点 -->
+                            <div class="absolute left-4 sm:left-5 -translate-x-1/2 top-4 z-10 flex items-center justify-center">
+                                <div class="w-6 h-6 rounded-full ${dotColor} ${dotBorderClass} ring-4 border-2 flex items-center justify-center transition-all duration-300 shadow-sm">
+                                    <span class="text-[9px] font-bold">${String(idx + 1).padStart(2, '0')}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 时间轴卡片 -->
+                            <div id="${cardId}" onclick="toggleCartItem('${currentActiveGame}', '${category.name}', '${item.name}', '${item.price}')"
+                                 class="border rounded-xl p-4 cursor-pointer game-card transition-all duration-300 hover:bg-slate-900 ${
+                                    isSelected ? 'selected' : ''
+                                 }">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                    <h3 class="font-bold text-sm sm:text-base flex items-center gap-1.5 ${isSelected ? 'text-rose-400' : 'text-slate-100'}">
+                                        ${isSelected ? '<i class="fa-solid fa-circle-check text-rose-500 text-xs"></i>' : ''}
+                                        ${item.name}
+                                    </h3>
+                                    <span class="bg-rose-500/10 text-rose-400 text-xs font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap border border-rose-500/10 self-start sm:self-center">
+                                        ${item.price}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 leading-relaxed">${item.desc}</p>
+                            </div>
+                        `;
+                        timelineContainer.appendChild(itemDiv);
+                    });
+
+                    categorySection.appendChild(timelineContainer);
+                    container.appendChild(categorySection);
+                    return; // 提前退出以跳过默认卡片网格渲染
+                }
+
+                // 默认 3 列弹性卡片网格渲染
                 const gridDiv = document.createElement('div');
                 gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
 
@@ -1220,15 +1476,15 @@
                     const itemId = `${currentActiveGame}-${category.name}-${item.name}`;
                     const isSelected = cart.some(cartItem => cartItem.id === itemId);
                     
-                    // 绑定精确的元素卡片ID，便于联想搜索后定位
+                    // 绑定精确 of 元素卡片ID，便于联想搜索后定位
                     const cardId = `${currentActiveGame}-card-${index}-${itemIndex}`;
 
                     const card = document.createElement('div');
                     card.id = cardId;
                     card.className = `border rounded-2xl p-5 hover:bg-slate-900 transition-all duration-300 flex flex-col justify-between group cursor-pointer game-card ${
                         isSelected 
-                            ? 'bg-slate-900 border-rose-500 shadow-lg shadow-rose-500/10 selected' 
-                            : 'bg-slate-900/60 border-slate-800 hover:border-slate-700/80'
+                            ? 'selected' 
+                            : ''
                     }`;
                     card.setAttribute('onclick', `toggleCartItem('${currentActiveGame}', '${category.name}', '${item.name}', '${item.price}')`);
                     
@@ -1236,7 +1492,7 @@
                         <div>
                             <div class="flex justify-between items-start gap-4 mb-3">
                                 <h3 class="font-bold transition-colors text-base flex items-center gap-1.5 ${isSelected ? 'text-rose-400' : 'text-slate-100'}">
-                                    ${isSelected ? '<i class="fa-solid fa-circle-check text-rose-500 text-sm"></i>' : ''}
+                                    ${isSelected ? '<i class="fa-solid fa-circle-check text-rose-500 text-xs"></i>' : ''}
                                     ${item.name}
                                 </h3>
                                 <span class="bg-rose-500/10 text-rose-400 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap border border-rose-500/10">
@@ -1305,8 +1561,8 @@
             } else {
                 document.getElementById('themeIcon').className = 'fa-solid fa-moon';
             }
-            switchGame('genshin');
+            switchGame('starRail'); // 默认进入崩坏：星穹铁道并调取对应全局背景
         };
     </script>
 </body>
-</html>
+</html>s
